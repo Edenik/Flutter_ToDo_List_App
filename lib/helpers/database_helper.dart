@@ -1,8 +1,8 @@
 import 'dart:io';
-
-import 'package:flutter_todo_list_app/models/task_model.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path_provider/path_provider.dart';
+
+import '../models/task_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._instance();
@@ -52,7 +52,7 @@ class DatabaseHelper {
     taskMaplList.forEach((taskMap) {
       taskList.add(Task.fromMap(taskMap));
     });
-
+    taskList.sort((taskA, taskB) => taskA.date.compareTo(taskB.date));
     return taskList;
   }
 

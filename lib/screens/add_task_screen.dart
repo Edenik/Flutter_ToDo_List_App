@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_todo_list_app/helpers/database_helper.dart';
-import 'package:flutter_todo_list_app/models/task_model.dart';
 import 'package:intl/intl.dart';
+
+import '../helpers/database_helper.dart';
+import '../models/task_model.dart';
 
 class AddTaskScreen extends StatefulWidget {
   final Task task;
@@ -53,6 +54,12 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
     }
   }
 
+  _delete() {
+    DatabaseHelper.instance.deleteTask(widget.task.id);
+    widget.updateTaskList();
+    Navigator.pop(context);
+  }
+
   _submit() {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
@@ -69,6 +76,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
         DatabaseHelper.instance.insertTask(task);
       } else {
         //Update the task
+        task.id = widget.task.id;
         task.status = widget.task.status;
         DatabaseHelper.instance.updateTask(task);
       }
@@ -101,7 +109,7 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                   height: 20.0,
                 ),
                 Text(
-                  'Add Task',
+                  widget.task == null ? 'Add Task' : 'Update Task',
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 40.0,
@@ -192,13 +200,32 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
                           ),
                           child: FlatButton(
                             child: Text(
-                              'Add',
+                              widget.task == null ? 'Add' : 'Update',
                               style: TextStyle(
                                   color: Colors.white, fontSize: 20.0),
                             ),
                             onPressed: _submit,
                           ),
-                        )
+                        ),
+                        widget.task != null
+                            ? Container(
+                                margin: EdgeInsets.symmetric(vertical: 20.0),
+                                height: 60.0,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  color: Theme.of(context).primaryColor,
+                                  borderRadius: BorderRadius.circular(30.0),
+                                ),
+                                child: FlatButton(
+                                  child: Text(
+                                    'Delete',
+                                    style: TextStyle(
+                                        color: Colors.white, fontSize: 20.0),
+                                  ),
+                                  onPressed: _delete,
+                                ),
+                              )
+                            : SizedBox.shrink()
                       ],
                     ))
               ],

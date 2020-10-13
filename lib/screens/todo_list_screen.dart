@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_todo_list_app/helpers/database_helper.dart';
-import 'package:flutter_todo_list_app/models/task_model.dart';
-import 'package:flutter_todo_list_app/screens/add_task_screen.dart';
 import 'package:intl/intl.dart';
+
+import '../helpers/database_helper.dart';
+import '../models/task_model.dart';
+import './add_task_screen.dart';
 
 class TodoListScreen extends StatefulWidget {
   @override
@@ -40,7 +41,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       : TextDecoration.lineThrough),
             ),
             subtitle: Text(
-              '${_dateFormatter.format(task.date)} * ${task.prioriry}',
+              '${_dateFormatter.format(task.date)} ● ${task.prioriry}',
               style: TextStyle(
                   fontSize: 15.0,
                   decoration: task.status == 0
@@ -48,7 +49,7 @@ class _TodoListScreenState extends State<TodoListScreen> {
                       : TextDecoration.lineThrough),
             ),
             trailing: Checkbox(
-              value: true,
+              value: task.status == 1 ? true : false,
               onChanged: (value) {
                 task.status = value ? 1 : 0;
                 DatabaseHelper.instance.updateTask(task);
