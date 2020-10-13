@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_todo_list_app/helpers/database_helper.dart';
+import 'package:flutter_todo_list_app/models/task_model.dart';
 import 'package:intl/intl.dart';
 
 class AddTaskScreen extends StatefulWidget {
+  final Task task;
+  final Function updateTaskList;
+  AddTaskScreen({this.updateTaskList, this.task});
+
   @override
   _AddTaskScreenState createState() => _AddTaskScreenState();
 }
@@ -13,12 +19,16 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
   DateTime _date = DateTime.now();
   TextEditingController _dateController = TextEditingController();
   final List<String> _priorities = ['Low', 'Medium', 'High'];
-
   final DateFormat _dateFormatter = DateFormat('dd MMM, yyyy');
 
   @override
   void initState() {
     super.initState();
+    if (widget.task != null) {
+      _title = widget.task.title;
+      _date = widget.task.date;
+      _priority = widget.task.prioriry;
+    }
     _dateController.text = _dateFormatter.format(_date);
   }
 
@@ -51,10 +61,19 @@ class _AddTaskScreenState extends State<AddTaskScreen> {
       print(_date);
       print(_priority);
 
-      //Insert the task to our user's databae
+      Task task = Task(title: _title, date: _date, prioriry: _priority);
 
-      //Update the task
+      if (widget.task == null) {
+        //Insert the task to our user's databae
+        task.status = 0;
+        DatabaseHelper.instance.insertTask(task);
+      } else {
+        //Update the task
+        task.status = widget.task.status;
+        DatabaseHelper.instance.updateTask(task);
+      }
 
+      widget.updateTaskList();
       Navigator.pop(context);
     }
   }
